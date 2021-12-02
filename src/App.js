@@ -2,11 +2,13 @@ import { useState } from "react"
 import './App.css';
 import Header from './component/Header';
 import TaskList from './component/TaskList';
+import AddTask from "./component/AddTask";
 
 // const name = 'satish'
 // const x = true;
 
-function App() {
+const App = () => {
+  const [showAddTask, setShowAddTask ] = useState(false)
 
   const [taskList, setTaskList] = useState([
     {
@@ -31,6 +33,15 @@ function App() {
   ]
   )
 
+  //Add Task
+
+  const AddTask1 = (task) => {
+    const id = Math.floor(Math.random() * 1000) + 1
+    const newTask = { id, ...task}
+    setTaskList([...taskList, newTask])
+    console.log('===newTask====',newTask)
+  }
+
   // Delete Task
 
   const deleteTask = (id) => {
@@ -40,15 +51,26 @@ function App() {
 
   //Toggle Reminder
 
-  const toggleReminder = () =>{
+  const toggleReminder = (id) =>{
+    setTaskList(
+      taskList.map((task) => task.id === id ? {...task, reminder: !task.reminder} :task))
     // console.log(id)
   }
 
   return (
     <div className="container">
-      <Header />
-     {taskList.length > 0 ? (<TaskList taskMap={taskList} onToggle = {toggleReminder}
-        onDelete={deleteTask} />): ('No Task To Show')}
+      <Header 
+        onAdd={() => setShowAddTask(!showAddTask)}
+        showAdd = {showAddTask} 
+        />
+      { showAddTask && <AddTask 
+        onAdd = {AddTask1}
+      />
+      }
+     {taskList.length > 0 ? (<TaskList taskMap={taskList} 
+        onDelete={deleteTask}
+        onToggle={toggleReminder}
+         />): ('No Task To Show')}
     </div>
   );
 }
